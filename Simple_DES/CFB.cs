@@ -4,38 +4,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows;
 
 namespace Simple_DES
 {
-    public static class SCBC
+    public static class SCFB
     {
         private static BitArray bitArray_char_previous;
 
-        public static BitArray CipherCBC(BitArray bitArray_char, BitArray bitArray_key, BitArray InitVector, bool cond)
+        public static BitArray CipherCFB(BitArray bitArray_char, BitArray bitArray_key, BitArray InitVector, bool cond)
         {
             if (cond)
             {
-                bitArray_char = SDES.XorBitArrays(InitVector, bitArray_char);
-
                 bitArray_char = SDES.Cipher(bitArray_char, bitArray_key, cond);
+
+                bitArray_char = SDES.XorBitArrays(InitVector, bitArray_char);
             }
 
             else
             {
-                bitArray_char = SDES.Cipher(bitArray_char, bitArray_key, cond);
-
                 bitArray_char = SDES.XorBitArrays(InitVector, bitArray_char);
             }
 
             return bitArray_char;
         }
 
-        public static string CBC(bool is_checked, char[] data, int key)
+        public static string CFB(bool is_checked, char[] data, int key)
         {
-            
             string temp = "";
 
             int counter = 0;
@@ -44,13 +39,13 @@ namespace Simple_DES
 
             bool isNumber = int.TryParse(InitVectorStr, out InitVectorInt);
 
+            BitArray InitVector = Converters.IntToBit(InitVectorInt, 8);
+
             if (!isNumber || InitVectorStr.Length != 3)
             {
                 MessageBox.Show("Введенный вектор инициализации должен быть трехзначным числом!");
                 return "";
             }
-
-            BitArray InitVector = Converters.IntToBit(InitVectorInt, 8);
 
             if (is_checked)
             {
@@ -66,12 +61,16 @@ namespace Simple_DES
                     if (counter != length - 1)
                     {
                         bitArray_char_previous = Converters.CharToBit(data[length - i - 2]);
-                        bitArray_char = SCBC.CipherCBC(bitArray_char, bitArray_key, bitArray_char_previous, false);
+
+                        bitArray_char_previous = SDES.Cipher(bitArray_char_previous, bitArray_key, true);
+
+                        bitArray_char = SCFB.CipherCFB(bitArray_char, bitArray_key, bitArray_char_previous, false);
                         counter++;
                     }
                     else
                     {
-                        bitArray_char = SCBC.CipherCBC(bitArray_char, bitArray_key, InitVector, false);
+                        InitVector = SDES.Cipher(InitVector, bitArray_key, true);
+                        bitArray_char = SCFB.CipherCFB(bitArray_char, bitArray_key, InitVector, false);
                     }
 
                     bitArray_char_previous = bitArray_char;
@@ -97,13 +96,13 @@ namespace Simple_DES
 
                     if (counter == 0)
                     {
-                        bitArray_char = SCBC.CipherCBC(bitArray_char, bitArray_key, InitVector, true);
+                        bitArray_char = SCFB.CipherCFB(InitVector, bitArray_key, bitArray_char, true);
 
                         MessageBox.Show("Ваш вектор инициализации: " + InitVectorInt.ToString());
                     }
                     else
                     {
-                        bitArray_char = SCBC.CipherCBC(bitArray_char, bitArray_key, bitArray_char_previous, true);
+                        bitArray_char = SCFB.CipherCFB(bitArray_char_previous, bitArray_key, bitArray_char, true);
                     }
 
                     bitArray_char_previous = bitArray_char;
@@ -115,7 +114,6 @@ namespace Simple_DES
 
                     counter++;
                 }
-
                 return temp;
             }
         }
