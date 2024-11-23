@@ -66,6 +66,10 @@ namespace Simple_DES
                         is_checked = (bool)CBox.IsChecked;
                         Result_TextBlock.Text = SCFB.CFB(is_checked, data, key);
                         break;
+                    case "OFB":
+                        is_checked = (bool)CBox.IsChecked;
+                        Result_TextBlock.Text = SOFB.OFB(is_checked, data, key);
+                        break;
                     default:
                         break;
                 }

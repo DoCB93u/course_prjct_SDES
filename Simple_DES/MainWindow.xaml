@@ -64,7 +64,6 @@
                     <RadioButton x:Name="rBtn2" Content="CBC" FontSize="20"/>
                     <RadioButton x:Name="rBtn3" Content="CFB" FontSize="20"/>
                     <RadioButton x:Name="rBtn4" Content="OFB" FontSize="20"/>
-                    <RadioButton x:Name="rBtn5" Content="Counter Mode (CM)" FontSize="20"/>
                 </StackPanel>
 
                 <CheckBox Grid.Row="2" Margin="20 0 0 0" x:Name="CBox" Content="Decrypt" FontSize="20"/>
