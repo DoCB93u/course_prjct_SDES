@@ -18,12 +18,26 @@ namespace Simple_DES
     {
         private char[] data;
         private int key;
-        
 
         public MainWindow()
         {
             InitializeComponent();
             Console.OutputEncoding = Encoding.Unicode;    // Кодировка Extended ASCII 0-255
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) 
+        { 
+            if (e.ChangedButton == MouseButton.Left) { this.DragMove(); } 
+        }
+
+        private void Button_Click_Shutdown(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void Button_Click_Minimalize(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
 
         private void ResultButton_Click(object sender, RoutedEventArgs e)
@@ -56,11 +70,11 @@ namespace Simple_DES
                 {
                     case "ECB":
                         is_checked = (bool)CBox.IsChecked;
-                        Result_TextBlock.Text = SECB.ECB(is_checked, data, key); 
+                        Result_TextBlock.Text = SECB.ECB(is_checked, data, key);
                         break;
                     case "CBC":
                         is_checked = (bool)CBox.IsChecked;
-                        Result_TextBlock.Text = SCBC.CBC(is_checked, data, key); 
+                        Result_TextBlock.Text = SCBC.CBC(is_checked, data, key);
                         break;
                     case "CFB":
                         is_checked = (bool)CBox.IsChecked;
@@ -70,14 +84,20 @@ namespace Simple_DES
                         is_checked = (bool)CBox.IsChecked;
                         Result_TextBlock.Text = SOFB.OFB(is_checked, data, key);
                         break;
-                    default:
-                        break;
+                    default: break;
                 }
             }
             else
             {
                 MessageBox.Show("Никакой из режимов не выбран!");
             }
+        }
+
+        private void rBtn4_Checked(object sender, RoutedEventArgs e)
+        { CBox.IsEnabled = false; CBox.IsChecked = false; }
+        private void OtherRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!CBox.IsEnabled) { CBox.IsEnabled = true; }
         }
     }
 }
